@@ -1,0 +1,73 @@
+{
+	"indexes": [
+		{
+			"collectionGroup": "promptTemplates",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "stage",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "channel",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "deprecated",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "promptVersion",
+					"order": "DESCENDING"
+				}
+			]
+		},
+		{
+			"collectionGroup": "generatedMessages",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "channel",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				}
+			]
+		},
+		{
+			"collectionGroup": "generatedMessages",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "stage",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				}
+			]
+		},
+		{
+			"collectionGroup": "generatedMessages",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "channel",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "stage",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				}
+			]
+		}
+	],
+	"fieldOverrides": []
+}

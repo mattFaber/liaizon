@@ -1,0 +1,166 @@
+rules_version = '2';
+service cloud.firestore {
+	match /databases/{database}/documents {
+		function isSignedIn() {
+			return request.auth != null;
+		}
+
+		function tokenCompanyId() {
+			return request.auth.token.companyId;
+		}
+
+		function tokenRole() {
+			return request.auth.token.role;
+		}
+
+		function hasCompanyScope(companyId) {
+			return isSignedIn() && tokenCompanyId() == companyId;
+		}
+
+		function isAdmin(companyId) {
+			return hasCompanyScope(companyId) && tokenRole() == 'admin';
+		}
+
+		function isRecruiterOrAdmin(companyId) {
+			return hasCompanyScope(companyId) && (
+				tokenRole() == 'admin' ||
+				tokenRole() == 'recruiter'
+			);
+		}
+
+		function isCompanyMember(companyId) {
+			return hasCompanyScope(companyId) && (
+				tokenRole() == 'admin' ||
+				tokenRole() == 'recruiter' ||
+				tokenRole() == 'hiring_manager'
+			);
+		}
+
+		function hasValidCompanyIdOnCreate(companyId) {
+			return request.resource.data.companyId == companyId;
+		}
+
+		function hasValidCompanyIdOnUpdate(companyId) {
+			return request.resource.data.companyId == companyId && resource.data.companyId == companyId;
+		}
+
+		function validSelfUserPatch(companyId, userId) {
+			return hasCompanyScope(companyId) &&
+				request.auth.uid == userId &&
+				request.resource.data.companyId == resource.data.companyId &&
+				request.resource.data.userId == resource.data.userId &&
+				request.resource.data.email == resource.data.email &&
+				request.resource.data.displayName == resource.data.displayName &&
+				request.resource.data.role == resource.data.role &&
+				request.resource.data.createdAt == resource.data.createdAt &&
+				request.resource.data.isActive == resource.data.isActive;
+		}
+
+		function writeOperationalDoc(companyId) {
+			return isRecruiterOrAdmin(companyId) &&
+				(
+					(resource == null && hasValidCompanyIdOnCreate(companyId)) ||
+					(resource != null && hasValidCompanyIdOnUpdate(companyId))
+				);
+		}
+
+		function writeAdminDoc(companyId) {
+			return isAdmin(companyId) &&
+				(
+					(resource == null && hasValidCompanyIdOnCreate(companyId)) ||
+					(resource != null && hasValidCompanyIdOnUpdate(companyId))
+				);
+		}
+
+		match /companies/{companyId} {
+			allow read: if isCompanyMember(companyId);
+			allow create, update, delete: if isAdmin(companyId) &&
+				(
+					(resource == null && request.resource.data.companyId == companyId) ||
+					(resource != null && request.resource.data.companyId == resource.data.companyId)
+				);
+
+			match /users/{userId} {
+				allow read: if isAdmin(companyId) || (hasCompanyScope(companyId) && request.auth.uid == userId);
+				allow create, delete: if isAdmin(companyId) && hasValidCompanyIdOnCreate(companyId);
+				allow update: if (isAdmin(companyId) && hasValidCompanyIdOnUpdate(companyId)) ||
+					validSelfUserPatch(companyId, userId);
+			}
+
+			match /settings/{settingsId} {
+				allow read: if isCompanyMember(companyId);
+				allow write: if writeAdminDoc(companyId);
+			}
+
+			match /promptTemplates/{templateId} {
+				allow read: if isCompanyMember(companyId);
+				allow write: if writeAdminDoc(companyId);
+			}
+
+			match /systemInstructionVersions/{versionId} {
+				allow read: if isCompanyMember(companyId);
+				allow write: if writeAdminDoc(companyId);
+			}
+
+			match /writingSamples/{sampleId} {
+				allow read: if isCompanyMember(companyId);
+				allow write: if writeAdminDoc(companyId);
+			}
+
+			match /candidates/{candidateId} {
+				allow read: if isCompanyMember(companyId);
+				allow write: if writeOperationalDoc(companyId);
+
+				match /versions/{versionId} {
+					allow read: if isCompanyMember(companyId);
+					allow write: if writeOperationalDoc(companyId);
+				}
+
+				match /resumeChunks/{chunkId} {
+					allow read: if isCompanyMember(companyId);
+					allow write: if writeOperationalDoc(companyId);
+				}
+			}
+
+			match /jobs/{jobId} {
+				allow read: if isCompanyMember(companyId);
+				allow write: if writeOperationalDoc(companyId);
+
+				match /versions/{versionId} {
+					allow read: if isCompanyMember(companyId);
+					allow write: if writeOperationalDoc(companyId);
+				}
+
+				match /descriptionChunks/{chunkId} {
+					allow read: if isCompanyMember(companyId);
+					allow write: if writeOperationalDoc(companyId);
+				}
+			}
+
+			match /applications/{applicationId} {
+				allow read: if isCompanyMember(companyId);
+				allow write: if writeOperationalDoc(companyId);
+
+				match /stageTransitions/{transitionId} {
+					allow read: if isCompanyMember(companyId);
+					allow write: if writeOperationalDoc(companyId);
+				}
+			}
+
+			match /projects/{projectId} {
+				allow read: if isCompanyMember(companyId);
+				allow write: if writeOperationalDoc(companyId);
+			}
+
+			match /generatedMessages/{messageId} {
+				allow read: if isCompanyMember(companyId);
+				allow write: if writeOperationalDoc(companyId);
+			}
+
+			match /bulkGenerationJobs/{bulkJobId} {
+				allow read: if isCompanyMember(companyId);
+				allow write: if writeOperationalDoc(companyId);
+			}
+		}
+	}
+}
