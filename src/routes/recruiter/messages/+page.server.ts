@@ -72,7 +72,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		page: parsePositiveInt(url.searchParams.get('page'), 1, 1, 10_000),
 		pageSize: parsePositiveInt(url.searchParams.get('pageSize'), 25, 1, 500)
 	};
-	if (!PAGE_SIZE_OPTIONS.includes(initialPagination.pageSize as (typeof PAGE_SIZE_OPTIONS)[number])) {
+	if (
+		!PAGE_SIZE_OPTIONS.includes(initialPagination.pageSize as (typeof PAGE_SIZE_OPTIONS)[number])
+	) {
 		initialPagination.pageSize = 25;
 	}
 
@@ -97,7 +99,10 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	}
 
 	const companyId = locals.user.companyId;
-	const fetchLimit = Math.max(initialPagination.page * initialPagination.pageSize, initialPagination.pageSize);
+	const fetchLimit = Math.max(
+		initialPagination.page * initialPagination.pageSize,
+		initialPagination.pageSize
+	);
 	const scanLimit = Math.min(fetchLimit, MAX_MESSAGE_SCAN);
 	const [applications, allMessages] = await Promise.all([
 		firestoreRepository.listApplications(companyId),
@@ -105,8 +110,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			limit: scanLimit,
 			channel: initialFilters.channel === 'all' ? undefined : initialFilters.channel,
 			stage: initialFilters.stage === 'all' ? undefined : initialFilters.stage,
-			sortDirection:
-				initialFilters.sort === 'oldest' ? 'asc' : 'desc'
+			sortDirection: initialFilters.sort === 'oldest' ? 'asc' : 'desc'
 		})
 	]);
 
@@ -236,7 +240,9 @@ export const actions: Actions = {
 		});
 
 		if (!payloadResult.success) {
-			return fail(400, { error: 'Invalid message generation input. Check constraints and samples.' });
+			return fail(400, {
+				error: 'Invalid message generation input. Check constraints and samples.'
+			});
 		}
 
 		const requestPayload = payloadResult.data;
@@ -320,7 +326,10 @@ export const actions: Actions = {
 		const messageBody = String(formData.get('message') ?? '').trim();
 		const wasApproved = String(formData.get('wasApproved') ?? 'false') === 'true';
 
-		const existingMessage = await firestoreRepository.getGeneratedMessage(user.companyId, messageId);
+		const existingMessage = await firestoreRepository.getGeneratedMessage(
+			user.companyId,
+			messageId
+		);
 		if (!existingMessage) {
 			return fail(404, { error: 'Generated message not found.' });
 		}
@@ -349,7 +358,10 @@ export const actions: Actions = {
 
 		const formData = await event.request.formData();
 		const messageId = String(formData.get('messageId') ?? '').trim();
-		const existingMessage = await firestoreRepository.getGeneratedMessage(user.companyId, messageId);
+		const existingMessage = await firestoreRepository.getGeneratedMessage(
+			user.companyId,
+			messageId
+		);
 		if (!existingMessage) {
 			return fail(404, { error: 'Generated message not found.' });
 		}

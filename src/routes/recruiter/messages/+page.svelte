@@ -4,7 +4,9 @@
 
 	let { data, form } = $props();
 	let isGenerating = $state(false);
-	let toastMessage = $derived(form?.error ?? form?.successMessage ?? (form?.success ? 'Message generated successfully.' : ''));
+	let toastMessage = $derived(
+		form?.error ?? form?.successMessage ?? (form?.success ? 'Message generated successfully.' : '')
+	);
 	let toastTone = $derived((form?.error ? 'error' : 'success') as 'error' | 'success');
 	let optimisticHiddenById: Record<string, boolean> = $state({});
 	let optimisticUpdatedById: Record<
@@ -20,25 +22,6 @@
 		'offer_stage',
 		'rejection'
 	] as const;
-
-	type MessageFilters = {
-		channel: 'all' | 'email' | 'linkedin' | 'sms';
-		stage:
-			| 'all'
-			| 'initial_outreach'
-			| 'follow_up'
-			| 'interview_invite'
-			| 'interview_follow_up'
-			| 'offer_stage'
-			| 'rejection';
-		q: string;
-		sort: 'newest' | 'oldest' | 'tokens_desc';
-	};
-
-	type MessagePagination = {
-		page: number;
-		pageSize: number;
-	};
 
 	function formatTokens(totalTokens: number | undefined): string {
 		return typeof totalTokens === 'number' ? `${totalTokens} tokens` : 'Token usage unavailable';
@@ -167,14 +150,21 @@
 
 		<label>
 			Search
-			<input type="search" name="q" value={data.initialFilters.q} placeholder="Candidate, job, subject, or body" />
+			<input
+				type="search"
+				name="q"
+				value={data.initialFilters.q}
+				placeholder="Candidate, job, subject, or body"
+			/>
 		</label>
 
 		<label>
 			Sort by
 			<select name="sort">
-				<option value="newest" selected={data.initialFilters.sort === 'newest'}>Newest first</option>
-				<option value="oldest" selected={data.initialFilters.sort === 'oldest'}>Oldest first</option>
+				<option value="newest" selected={data.initialFilters.sort === 'newest'}>Newest first</option
+				>
+				<option value="oldest" selected={data.initialFilters.sort === 'oldest'}>Oldest first</option
+				>
 				<option value="tokens_desc" selected={data.initialFilters.sort === 'tokens_desc'}>
 					Highest token usage
 				</option>
@@ -210,7 +200,8 @@
 		{/if}
 		{#if data.scanLimitReached}
 			<p class="scan-warning">
-				Showing results from the first {data.scannedMessageCount} scanned messages. Refine filters to narrow results.
+				Showing results from the first {data.scannedMessageCount} scanned messages. Refine filters to
+				narrow results.
 				<span class="scan-counter">Scanned {data.scannedMessageCount} / {data.scanLimit}</span>
 				{#if data.hasMoreApprox}
 					There may be additional matching messages outside this window.
@@ -218,13 +209,15 @@
 			</p>
 		{/if}
 		<p class="result-summary">
-			Showing {data.resultStart} to {data.resultEnd} of {data.totalFilteredMessages} messages (page {data.currentPage} of {data.totalPages})
+			Showing {data.resultStart} to {data.resultEnd} of {data.totalFilteredMessages} messages (page {data.currentPage}
+			of {data.totalPages})
 			{#if data.scanLimitReached}
 				<span class="partial-window-note">Partial result window</span>
 				<details class="partial-window-help">
 					<summary>What is this?</summary>
 					<span>
-						This list is computed from a capped scan window for performance, so additional matching messages may exist outside the current window.
+						This list is computed from a capped scan window for performance, so additional matching
+						messages may exist outside the current window.
 					</span>
 				</details>
 			{/if}
@@ -234,34 +227,45 @@
 				{#if !optimisticHiddenById[message.messageId]}
 					{@const displayMessage = viewMessage(message)}
 					<li>
-					<div class="meta">
-						<strong>{displayMessage.candidateName}</strong> for <strong>{displayMessage.jobTitle}</strong>
-						<span>{displayMessage.stage} / {displayMessage.channel}</span>
-					</div>
-					<div class="meta-chips">
-						<span>Template v{displayMessage.templateVersionUsed}</span>
-						<span>{displayMessage.generationModel}</span>
-						<span>{formatTokens(displayMessage.tokens?.totalTokens)}</span>
-						<span>{displayMessage.generationLatencyMs} ms</span>
-					</div>
-					{#if displayMessage.subject}
-						<p><strong>Subject:</strong> {displayMessage.subject}</p>
-					{/if}
-					<p>{displayMessage.message}</p>
-					<form method="POST" action="?/updateMessage" class="inline-editor-form" onsubmit={(event) => handleOptimisticUpdateSubmit(event, message.messageId)}>
-						<input type="hidden" name="messageId" value={displayMessage.messageId} />
-						<input name="subject" value={displayMessage.subject ?? ''} placeholder="Subject" />
-						<textarea name="message" rows="3">{displayMessage.message}</textarea>
-						<select name="wasApproved">
-							<option value="false" selected={!displayMessage.wasApproved}>false</option>
-							<option value="true" selected={displayMessage.wasApproved}>true</option>
-						</select>
-						<button type="submit">Update Message</button>
-					</form>
-					<form method="POST" action="?/deleteMessage" class="inline-delete-form" onsubmit={() => handleOptimisticDeleteSubmit(message.messageId)}>
-						<input type="hidden" name="messageId" value={message.messageId} />
-						<button type="submit">Delete Message</button>
-					</form>
+						<div class="meta">
+							<strong>{displayMessage.candidateName}</strong> for
+							<strong>{displayMessage.jobTitle}</strong>
+							<span>{displayMessage.stage} / {displayMessage.channel}</span>
+						</div>
+						<div class="meta-chips">
+							<span>Template v{displayMessage.templateVersionUsed}</span>
+							<span>{displayMessage.generationModel}</span>
+							<span>{formatTokens(displayMessage.tokens?.totalTokens)}</span>
+							<span>{displayMessage.generationLatencyMs} ms</span>
+						</div>
+						{#if displayMessage.subject}
+							<p><strong>Subject:</strong> {displayMessage.subject}</p>
+						{/if}
+						<p>{displayMessage.message}</p>
+						<form
+							method="POST"
+							action="?/updateMessage"
+							class="inline-editor-form"
+							onsubmit={(event) => handleOptimisticUpdateSubmit(event, message.messageId)}
+						>
+							<input type="hidden" name="messageId" value={displayMessage.messageId} />
+							<input name="subject" value={displayMessage.subject ?? ''} placeholder="Subject" />
+							<textarea name="message" rows="3">{displayMessage.message}</textarea>
+							<select name="wasApproved">
+								<option value="false" selected={!displayMessage.wasApproved}>false</option>
+								<option value="true" selected={displayMessage.wasApproved}>true</option>
+							</select>
+							<button type="submit">Update Message</button>
+						</form>
+						<form
+							method="POST"
+							action="?/deleteMessage"
+							class="inline-delete-form"
+							onsubmit={() => handleOptimisticDeleteSubmit(message.messageId)}
+						>
+							<input type="hidden" name="messageId" value={message.messageId} />
+							<button type="submit">Delete Message</button>
+						</form>
 					</li>
 				{/if}
 			{/each}
@@ -276,7 +280,11 @@
 							<input type="hidden" name="stage" value={data.initialFilters.stage} />
 							<input type="hidden" name="q" value={data.initialFilters.q} />
 							<input type="hidden" name="sort" value={data.initialFilters.sort} />
-							<input type="hidden" name="pageSize" value={String(data.initialPagination.pageSize)} />
+							<input
+								type="hidden"
+								name="pageSize"
+								value={String(data.initialPagination.pageSize)}
+							/>
 							<input type="hidden" name="page" value="1" />
 							<button type="submit" class="pagination-button">First</button>
 						</form>
@@ -285,7 +293,11 @@
 							<input type="hidden" name="stage" value={data.initialFilters.stage} />
 							<input type="hidden" name="q" value={data.initialFilters.q} />
 							<input type="hidden" name="sort" value={data.initialFilters.sort} />
-							<input type="hidden" name="pageSize" value={String(data.initialPagination.pageSize)} />
+							<input
+								type="hidden"
+								name="pageSize"
+								value={String(data.initialPagination.pageSize)}
+							/>
 							<input type="hidden" name="page" value={String(data.currentPage - 1)} />
 							<button type="submit" class="pagination-button">Previous</button>
 						</form>
@@ -323,7 +335,11 @@
 							<input type="hidden" name="stage" value={data.initialFilters.stage} />
 							<input type="hidden" name="q" value={data.initialFilters.q} />
 							<input type="hidden" name="sort" value={data.initialFilters.sort} />
-							<input type="hidden" name="pageSize" value={String(data.initialPagination.pageSize)} />
+							<input
+								type="hidden"
+								name="pageSize"
+								value={String(data.initialPagination.pageSize)}
+							/>
 							<input type="hidden" name="page" value={String(data.currentPage + 1)} />
 							<button type="submit" class="pagination-button">Next</button>
 						</form>
@@ -332,7 +348,11 @@
 							<input type="hidden" name="stage" value={data.initialFilters.stage} />
 							<input type="hidden" name="q" value={data.initialFilters.q} />
 							<input type="hidden" name="sort" value={data.initialFilters.sort} />
-							<input type="hidden" name="pageSize" value={String(data.initialPagination.pageSize)} />
+							<input
+								type="hidden"
+								name="pageSize"
+								value={String(data.initialPagination.pageSize)}
+							/>
 							<input type="hidden" name="page" value={String(data.totalPages)} />
 							<button type="submit" class="pagination-button">Last</button>
 						</form>
@@ -559,5 +579,4 @@
 	.pagination-disabled {
 		color: #a1a1aa;
 	}
-
 </style>

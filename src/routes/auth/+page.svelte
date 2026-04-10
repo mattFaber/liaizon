@@ -8,7 +8,7 @@
 	let clientError = $state('');
 	let error = $derived(clientError || form?.error || '');
 	let effectiveCompanyId = $derived(
-		data.engineerAuthConfigured ? (data.configuredCompanyId || 'demo-company') : companyIdInput
+		data.engineerAuthConfigured ? data.configuredCompanyId || 'demo-company' : companyIdInput
 	);
 	let isGoogleSigningIn = $state(false);
 	let isManualSigningIn = $state(false);
@@ -84,8 +84,8 @@
 
 		{#if data.engineerAuthConfigured}
 			<p class="hint">
-				Engineer-managed bootstrap is enabled. End users do not need to provide a Firebase ID token on
-				this screen.
+				Engineer-managed bootstrap is enabled. End users do not need to provide a Firebase ID token
+				on this screen.
 			</p>
 			<button type="submit" disabled={isManualSigningIn}>
 				{isManualSigningIn ? 'Signing In...' : 'Continue'}

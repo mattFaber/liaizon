@@ -66,9 +66,7 @@ function validateInput({ idToken, expiresDays }) {
 	}
 
 	if (expiresDays < MIN_EXPIRES_DAYS || expiresDays > MAX_EXPIRES_DAYS) {
-		throw new Error(
-			`--expires-days must be between ${MIN_EXPIRES_DAYS} and ${MAX_EXPIRES_DAYS}.`
-		);
+		throw new Error(`--expires-days must be between ${MIN_EXPIRES_DAYS} and ${MAX_EXPIRES_DAYS}.`);
 	}
 
 	if (!process.env.GCP_PROJECT_ID?.trim()) {

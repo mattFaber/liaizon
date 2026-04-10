@@ -33,7 +33,8 @@ function getFirebaseApp(): FirebaseApp {
 	} catch (error) {
 		if (error instanceof ZodError) {
 			throw new Error(
-				'Firebase client environment is incomplete. Set PUBLIC_FIREBASE_* (or VITE_FIREBASE_*) variables before using Google sign-in.'
+				'Firebase client environment is incomplete. Set PUBLIC_FIREBASE_* (or VITE_FIREBASE_*) variables before using Google sign-in.',
+				{ cause: error }
 			);
 		}
 

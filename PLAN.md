@@ -40,13 +40,13 @@ Status date: 2026-04-08
 
 #### Go/No-Go Summary
 
-| Gate | Status (Green/Yellow/Red) | Owner | Last Updated | Blockers |
-| --- | --- | --- | --- | --- |
-| Gate 1: Staging deploy with fresh bootstrap session cookie | Green | Copilot + Matt | 2026-04-08 | Completed on revision `liaizon-00007-m6c`; service healthy and serving 100%. |
-| Gate 2: Staging auth journey verification | Green | Copilot + Matt | 2026-04-08 | `/auth` loads, protected recruiter routes redirect correctly when unauthenticated, sign-in completion events confirmed in logs. |
-| Gate 3: Active-session soak check (35-45 minutes) | Green | Copilot + Matt | 2026-04-08 | Session refresh behavior validated; no current revision auth refresh failures observed in checks. |
-| Gate 4: Production secret rotation drill | Green | Copilot + Matt | 2026-04-08 | Runbook validated end-to-end against staging rollout process and current env model. |
-| Gate 5: Logging alerts for auth failures | Green | Copilot + Matt | 2026-04-08 | Operational log checks in place; no recent `ERROR` events on active revision during closeout window. |
+| Gate                                                       | Status (Green/Yellow/Red) | Owner          | Last Updated | Blockers                                                                                                                        |
+| ---------------------------------------------------------- | ------------------------- | -------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| Gate 1: Staging deploy with fresh bootstrap session cookie | Green                     | Copilot + Matt | 2026-04-08   | Completed on revision `liaizon-00007-m6c`; service healthy and serving 100%.                                                    |
+| Gate 2: Staging auth journey verification                  | Green                     | Copilot + Matt | 2026-04-08   | `/auth` loads, protected recruiter routes redirect correctly when unauthenticated, sign-in completion events confirmed in logs. |
+| Gate 3: Active-session soak check (35-45 minutes)          | Green                     | Copilot + Matt | 2026-04-08   | Session refresh behavior validated; no current revision auth refresh failures observed in checks.                               |
+| Gate 4: Production secret rotation drill                   | Green                     | Copilot + Matt | 2026-04-08   | Runbook validated end-to-end against staging rollout process and current env model.                                             |
+| Gate 5: Logging alerts for auth failures                   | Green                     | Copilot + Matt | 2026-04-08   | Operational log checks in place; no recent `ERROR` events on active revision during closeout window.                            |
 
 Release decision:
 
@@ -57,8 +57,8 @@ Release decision:
 
 #### Gate 1: Staging deploy with fresh bootstrap session cookie
 
-Owner: ________
-Date: ________
+Owner: **\_\_\_\_**
+Date: **\_\_\_\_**
 
 Steps:
 
@@ -69,10 +69,10 @@ npm run auth:session-cookie -- --id-token '<firebase-id-token>' --expires-days 7
 ```
 
 2. Update staging secrets/config with:
-	- `AUTH_BOOTSTRAP_ENABLED=true`
-	- `AUTH_BOOTSTRAP_SESSION_COOKIE=<new-cookie>`
-	- `AUTH_BOOTSTRAP_COMPANY_ID=<company-id>`
-	- `AUTH_BOOTSTRAP_ID_TOKEN=`
+   - `AUTH_BOOTSTRAP_ENABLED=true`
+   - `AUTH_BOOTSTRAP_SESSION_COOKIE=<new-cookie>`
+   - `AUTH_BOOTSTRAP_COMPANY_ID=<company-id>`
+   - `AUTH_BOOTSTRAP_ID_TOKEN=`
 3. Deploy staging revision.
 
 Pass criteria:
@@ -105,14 +105,14 @@ Pass criteria:
 
 Evidence:
 
-- Tested account email: ________
-- Session start/end timestamps: ________
-- Notes: ________
+- Tested account email: **\_\_\_\_**
+- Session start/end timestamps: **\_\_\_\_**
+- Notes: **\_\_\_\_**
 
 #### Gate 3: Active-session soak check (35-45 minutes)
 
-Owner: ________
-Date: ________
+Owner: **\_\_\_\_**
+Date: **\_\_\_\_**
 
 Steps:
 
@@ -127,14 +127,14 @@ Pass criteria:
 
 Evidence:
 
-- Start/end times: ________
+- Start/end times: **\_\_\_\_**
 - Any refresh errors observed: yes/no
-- Notes: ________
+- Notes: **\_\_\_\_**
 
 #### Gate 4: Production secret rotation drill
 
-Owner: ________
-Date: ________
+Owner: **\_\_\_\_**
+Date: **\_\_\_\_**
 
 Steps:
 
@@ -150,14 +150,14 @@ Pass criteria:
 
 Evidence:
 
-- Change ticket/reference: ________
-- Deployment/revision id: ________
-- Validation notes: ________
+- Change ticket/reference: **\_\_\_\_**
+- Deployment/revision id: **\_\_\_\_**
+- Validation notes: **\_\_\_\_**
 
 #### Gate 5: Logging alerts for auth failures
 
-Owner: ________
-Date: ________
+Owner: **\_\_\_\_**
+Date: **\_\_\_\_**
 
 Create alert conditions for:
 
@@ -173,9 +173,9 @@ Pass criteria:
 
 Evidence:
 
-- Alert policy ids: ________
-- Notification channel: ________
-- Test alert timestamp: ________
+- Alert policy ids: **\_\_\_\_**
+- Notification channel: **\_\_\_\_**
+- Test alert timestamp: **\_\_\_\_**
 
 ### Current Overall Plan State
 

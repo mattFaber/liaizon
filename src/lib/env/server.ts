@@ -51,10 +51,7 @@ const serverEnvSchema = z.object({
 	cloudTasksLocation: z.string().min(1).optional(),
 	cloudTasksQueueBulkGeneration: z.string().min(1).optional(),
 	bulkGenerationMaxConcurrency: z.coerce.number().int().positive().default(5),
-	authBootstrapEnabled: z
-		.preprocess(parseBooleanEnv, z.boolean())
-		.optional()
-		.default(false),
+	authBootstrapEnabled: z.preprocess(parseBooleanEnv, z.boolean()).optional().default(false),
 	authBootstrapIdToken: z.string().min(1).optional(),
 	authBootstrapSessionCookie: z.string().min(1).optional(),
 	authBootstrapCompanyId: z.string().min(1).default('demo-company'),

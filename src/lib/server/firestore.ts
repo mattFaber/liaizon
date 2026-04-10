@@ -132,7 +132,11 @@ async function listCollection<T>(
 
 export const firestoreRepository = {
 	async listCompanies(limit = 100): Promise<Company[]> {
-		const snapshot = await adminDb.collection('companies').orderBy('createdAt', 'desc').limit(limit).get();
+		const snapshot = await adminDb
+			.collection('companies')
+			.orderBy('createdAt', 'desc')
+			.limit(limit)
+			.get();
 		return snapshot.docs.map((doc) => normalizeFirestoreDoc<Company>(doc.data()));
 	},
 
@@ -321,8 +325,16 @@ export const firestoreRepository = {
 		return getById<SystemInstructionVersion>(companyId, 'systemInstructionVersions', versionId);
 	},
 
-	listSystemInstructionVersions(companyId: string, limit = 50): Promise<SystemInstructionVersion[]> {
-		return listCollection<SystemInstructionVersion>(companyId, 'systemInstructionVersions', 'createdAt', limit);
+	listSystemInstructionVersions(
+		companyId: string,
+		limit = 50
+	): Promise<SystemInstructionVersion[]> {
+		return listCollection<SystemInstructionVersion>(
+			companyId,
+			'systemInstructionVersions',
+			'createdAt',
+			limit
+		);
 	},
 
 	async deleteSystemInstructionVersion(companyId: string, versionId: string): Promise<void> {

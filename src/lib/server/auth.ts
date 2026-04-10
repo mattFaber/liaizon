@@ -13,7 +13,10 @@ function toSessionCookieExpiresInMs(expiresDays: number): number {
 		throw new Error('Session cookie expiration days must be an integer.');
 	}
 
-	if (expiresDays < SESSION_COOKIE_MIN_EXPIRES_DAYS || expiresDays > SESSION_COOKIE_MAX_EXPIRES_DAYS) {
+	if (
+		expiresDays < SESSION_COOKIE_MIN_EXPIRES_DAYS ||
+		expiresDays > SESSION_COOKIE_MAX_EXPIRES_DAYS
+	) {
 		throw new Error(
 			`Session cookie expiration days must be between ${SESSION_COOKIE_MIN_EXPIRES_DAYS} and ${SESSION_COOKIE_MAX_EXPIRES_DAYS}.`
 		);
@@ -49,7 +52,9 @@ export async function createSessionTokenFromIdToken(
 	idToken: string,
 	expiresDays: number = SESSION_COOKIE_DEFAULT_EXPIRES_DAYS
 ): Promise<string> {
-	return adminAuth.createSessionCookie(idToken, { expiresIn: toSessionCookieExpiresInMs(expiresDays) });
+	return adminAuth.createSessionCookie(idToken, {
+		expiresIn: toSessionCookieExpiresInMs(expiresDays)
+	});
 }
 
 export function getAuthCookieOptions(maxAgeDays: number = SESSION_COOKIE_DEFAULT_EXPIRES_DAYS) {

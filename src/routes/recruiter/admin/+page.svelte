@@ -141,8 +141,8 @@
 	<section class="panel panel-bootstrap">
 		<h3>Bootstrap Auth</h3>
 		<p class="hint">
-			Generate a fresh <code>AUTH_BOOTSTRAP_SESSION_COOKIE</code> directly in the admin console. The
-			mint action only accepts an ID token from the currently signed-in admin user.
+			Generate a fresh <code>AUTH_BOOTSTRAP_SESSION_COOKIE</code> directly in the admin console. The mint
+			action only accepts an ID token from the currently signed-in admin user.
 		</p>
 		<form method="POST" action="?/mintBootstrapSessionCookie" onsubmit={submitBootstrapMint}>
 			<label>
@@ -151,12 +151,23 @@
 			</label>
 			<label>
 				Expires in days
-				<input name="expiresDays" type="number" bind:value={bootstrapExpiresDays} min="1" max="14" required />
+				<input
+					name="expiresDays"
+					type="number"
+					bind:value={bootstrapExpiresDays}
+					min="1"
+					max="14"
+					required
+				/>
 			</label>
 			<input name="idToken" type="hidden" bind:value={bootstrapIdToken} />
 
 			<div class="actions-inline">
-				<button type="button" onclick={prepareBootstrapIdToken} disabled={isPreparingBootstrapToken}>
+				<button
+					type="button"
+					onclick={prepareBootstrapIdToken}
+					disabled={isPreparingBootstrapToken}
+				>
 					{isPreparingBootstrapToken ? 'Preparing Token...' : 'Acquire Firebase ID Token'}
 				</button>
 				<button type="submit" disabled={isMintingBootstrapCookie}>
@@ -192,24 +203,36 @@
 				<select name="plan">
 					<option value="free" selected={data.company?.plan === 'free'}>free</option>
 					<option value="pro" selected={data.company?.plan === 'pro'}>pro</option>
-					<option value="enterprise" selected={data.company?.plan === 'enterprise'}>enterprise</option>
+					<option value="enterprise" selected={data.company?.plan === 'enterprise'}
+						>enterprise</option
+					>
 				</select>
 			</label>
 			<label>
 				Default style strength
 				<select name="defaultStyleStrength">
 					<option value="low" selected={data.company?.defaultStyleStrength === 'low'}>low</option>
-					<option value="medium" selected={data.company?.defaultStyleStrength === 'medium'}>medium</option>
-					<option value="high" selected={data.company?.defaultStyleStrength === 'high'}>high</option>
+					<option value="medium" selected={data.company?.defaultStyleStrength === 'medium'}
+						>medium</option
+					>
+					<option value="high" selected={data.company?.defaultStyleStrength === 'high'}>high</option
+					>
 				</select>
 			</label>
 			<label>
 				Monthly generation quota
-				<input name="monthlyGenerationQuota" type="number" min="0" value={data.company?.monthlyGenerationQuota ?? 0} />
+				<input
+					name="monthlyGenerationQuota"
+					type="number"
+					min="0"
+					value={data.company?.monthlyGenerationQuota ?? 0}
+				/>
 			</label>
 			<label>
 				Settings JSON
-				<textarea name="settingsJson" rows="3">{JSON.stringify(data.company?.settings ?? {}, null, 2)}</textarea>
+				<textarea name="settingsJson" rows="3"
+					>{JSON.stringify(data.company?.settings ?? {}, null, 2)}</textarea
+				>
 			</label>
 			<label>
 				Active
@@ -273,7 +296,9 @@
 								<option value="true" selected={user.isActive}>true</option>
 								<option value="false" selected={!user.isActive}>false</option>
 							</select>
-							<textarea name="preferencesJson" rows="2">{JSON.stringify(user.preferences ?? {}, null, 2)}</textarea>
+							<textarea name="preferencesJson" rows="2"
+								>{JSON.stringify(user.preferences ?? {}, null, 2)}</textarea
+							>
 							<button type="submit">Update</button>
 						</form>
 						<form method="POST" action="?/deleteUser" onsubmit={() => hideUser(user.userId)}>
@@ -314,7 +339,8 @@
 			</label>
 			<label>
 				Notification preferences JSON
-				<textarea name="notificationPreferencesJson" rows="2" placeholder={`{"digest":"daily"}`}></textarea>
+				<textarea name="notificationPreferencesJson" rows="2" placeholder={`{"digest":"daily"}`}
+				></textarea>
 			</label>
 			<p class="hint">JSON fields are optional. Empty values default to {'{}'}.</p>
 			<button type="submit">Create Settings</button>
@@ -327,7 +353,9 @@
 							<input type="hidden" name="settingsId" value={settings.settingsId} />
 							<select name="defaultChannel">
 								{#each channels as channel (channel)}
-									<option value={channel} selected={settings.defaultChannel === channel}>{channel}</option>
+									<option value={channel} selected={settings.defaultChannel === channel}
+										>{channel}</option
+									>
 								{/each}
 							</select>
 							<select name="defaultStage">
@@ -337,14 +365,26 @@
 							</select>
 							<select name="defaultStyleStrength">
 								<option value="low" selected={settings.defaultStyleStrength === 'low'}>low</option>
-								<option value="medium" selected={settings.defaultStyleStrength === 'medium'}>medium</option>
-								<option value="high" selected={settings.defaultStyleStrength === 'high'}>high</option>
+								<option value="medium" selected={settings.defaultStyleStrength === 'medium'}
+									>medium</option
+								>
+								<option value="high" selected={settings.defaultStyleStrength === 'high'}
+									>high</option
+								>
 							</select>
-							<textarea name="featureFlagsJson" rows="2">{JSON.stringify(settings.featureFlags ?? {}, null, 2)}</textarea>
-							<textarea name="notificationPreferencesJson" rows="2">{JSON.stringify(settings.notificationPreferences ?? {}, null, 2)}</textarea>
+							<textarea name="featureFlagsJson" rows="2"
+								>{JSON.stringify(settings.featureFlags ?? {}, null, 2)}</textarea
+							>
+							<textarea name="notificationPreferencesJson" rows="2"
+								>{JSON.stringify(settings.notificationPreferences ?? {}, null, 2)}</textarea
+							>
 							<button type="submit">Update</button>
 						</form>
-						<form method="POST" action="?/deleteSettings" onsubmit={() => hideSettings(settings.settingsId)}>
+						<form
+							method="POST"
+							action="?/deleteSettings"
+							onsubmit={() => hideSettings(settings.settingsId)}
+						>
 							<input type="hidden" name="settingsId" value={settings.settingsId} />
 							<button type="submit">Delete</button>
 						</form>
@@ -411,7 +451,11 @@
 							</select>
 							<button type="submit">Update</button>
 						</form>
-						<form method="POST" action="?/deleteWritingSample" onsubmit={() => hideSample(sample.sampleId)}>
+						<form
+							method="POST"
+							action="?/deleteWritingSample"
+							onsubmit={() => hideSample(sample.sampleId)}
+						>
 							<input type="hidden" name="sampleId" value={sample.sampleId} />
 							<button type="submit">Delete</button>
 						</form>
@@ -471,7 +515,11 @@
 							<textarea name="basePrompt" rows="4">{template.basePrompt}</textarea>
 							<button type="submit">Update</button>
 						</form>
-						<form method="POST" action="?/deletePromptTemplate" onsubmit={() => hideTemplate(template.templateId)}>
+						<form
+							method="POST"
+							action="?/deletePromptTemplate"
+							onsubmit={() => hideTemplate(template.templateId)}
+						>
 							<input type="hidden" name="templateId" value={template.templateId} />
 							<button type="submit">Delete</button>
 						</form>
@@ -511,7 +559,11 @@
 							<textarea name="notes" rows="2">{version.notes ?? ''}</textarea>
 							<button type="submit">Update</button>
 						</form>
-						<form method="POST" action="?/deleteSystemInstructionVersion" onsubmit={() => hideInstruction(version.versionId)}>
+						<form
+							method="POST"
+							action="?/deleteSystemInstructionVersion"
+							onsubmit={() => hideInstruction(version.versionId)}
+						>
 							<input type="hidden" name="versionId" value={version.versionId} />
 							<button type="submit">Delete</button>
 						</form>
@@ -525,8 +577,14 @@
 		<h3>Company</h3>
 		<p><strong>Name:</strong> {data.company?.name ?? 'Unavailable'}</p>
 		<p><strong>Plan:</strong> {data.company?.plan ?? 'Unavailable'}</p>
-		<p><strong>Default style strength:</strong> {data.company?.defaultStyleStrength ?? 'Unavailable'}</p>
-		<p><strong>Monthly generation quota:</strong> {data.company?.monthlyGenerationQuota ?? 'Unavailable'}</p>
+		<p>
+			<strong>Default style strength:</strong>
+			{data.company?.defaultStyleStrength ?? 'Unavailable'}
+		</p>
+		<p>
+			<strong>Monthly generation quota:</strong>
+			{data.company?.monthlyGenerationQuota ?? 'Unavailable'}
+		</p>
 	</section>
 
 	<section class="panel">
@@ -534,7 +592,9 @@
 		<ul>
 			{#each data.users as user (user.userId)}
 				<li>
-					<strong>{user.displayName}</strong> ({user.email}) - {user.role} - {user.isActive ? 'active' : 'inactive'}
+					<strong>{user.displayName}</strong> ({user.email}) - {user.role} - {user.isActive
+						? 'active'
+						: 'inactive'}
 				</li>
 			{/each}
 		</ul>
@@ -545,7 +605,8 @@
 		<ul>
 			{#each data.settings as settings (settings.settingsId)}
 				<li>
-					<strong>{settings.settingsId}</strong> - channel: {settings.defaultChannel}, stage: {settings.defaultStage}, style: {settings.defaultStyleStrength}
+					<strong>{settings.settingsId}</strong> - channel: {settings.defaultChannel}, stage: {settings.defaultStage},
+					style: {settings.defaultStyleStrength}
 				</li>
 			{/each}
 		</ul>
@@ -556,7 +617,9 @@
 		<ul>
 			{#each data.writingSamples as sample (sample.sampleId)}
 				<li>
-					<strong>{sample.sampleId}</strong> - {sample.scope}/{sample.channel} - {sample.isActive ? 'active' : 'inactive'}
+					<strong>{sample.sampleId}</strong> - {sample.scope}/{sample.channel} - {sample.isActive
+						? 'active'
+						: 'inactive'}
 				</li>
 			{/each}
 		</ul>
@@ -567,7 +630,8 @@
 		<ul>
 			{#each data.promptTemplates as template (template.templateId)}
 				<li>
-					<strong>{template.templateId}</strong> - {template.stage}/{template.channel} v{template.promptVersion} {template.deprecated ? '(deprecated)' : ''}
+					<strong>{template.templateId}</strong> - {template.stage}/{template.channel} v{template.promptVersion}
+					{template.deprecated ? '(deprecated)' : ''}
 				</li>
 			{/each}
 		</ul>
@@ -658,5 +722,4 @@
 		font-size: 0.86rem;
 		color: #52525b;
 	}
-
 </style>

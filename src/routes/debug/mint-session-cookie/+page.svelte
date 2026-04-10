@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { data, form } = $props();
+	let { form } = $props();
 	let idToken = $state('');
 	let expiresDays = $state('7');
 	let isSubmitting = $state(false);
@@ -30,7 +30,9 @@
 
 <main class="debug-page">
 	<h1>🔧 Debug: Mint Session Cookie</h1>
-	<p class="hint">Development-only utility to generate Firebase session cookies for local testing.</p>
+	<p class="hint">
+		Development-only utility to generate Firebase session cookies for local testing.
+	</p>
 
 	<section class="panel">
 		<h2>Exchange ID Token for Session Cookie</h2>
@@ -70,12 +72,16 @@
 				<p class="message">{form.message}</p>
 				<div class="cookie-output">
 					<p class="label">Session Cookie (for .env.local):</p>
-					<textarea readonly rows="3">{`AUTH_BOOTSTRAP_SESSION_COOKIE=${form.sessionCookie}`}</textarea>
+					<textarea readonly rows="3"
+						>{`AUTH_BOOTSTRAP_SESSION_COOKIE=${form.sessionCookie}`}</textarea
+					>
 					<button type="button" onclick={copyToClipboard} class="copy-btn">
 						{copiedToClipboard ? '✓ Copied' : 'Copy to Clipboard'}
 					</button>
 				</div>
-				<p class="instruction">Set <code>AUTH_BOOTSTRAP_ENABLED=true</code> to activate bootstrap auth.</p>
+				<p class="instruction">
+					Set <code>AUTH_BOOTSTRAP_ENABLED=true</code> to activate bootstrap auth.
+				</p>
 			</div>
 		{/if}
 	</section>

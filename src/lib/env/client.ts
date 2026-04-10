@@ -15,8 +15,10 @@ export type ClientEnv = z.infer<typeof clientEnvSchema>;
 
 export function getClientEnv(): ClientEnv {
 	const firebaseApiKey = env.PUBLIC_FIREBASE_API_KEY ?? import.meta.env.VITE_FIREBASE_API_KEY;
-	const firebaseAuthDomain = env.PUBLIC_FIREBASE_AUTH_DOMAIN ?? import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
-	const firebaseProjectId = env.PUBLIC_FIREBASE_PROJECT_ID ?? import.meta.env.VITE_FIREBASE_PROJECT_ID;
+	const firebaseAuthDomain =
+		env.PUBLIC_FIREBASE_AUTH_DOMAIN ?? import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
+	const firebaseProjectId =
+		env.PUBLIC_FIREBASE_PROJECT_ID ?? import.meta.env.VITE_FIREBASE_PROJECT_ID;
 	const firebaseStorageBucket =
 		env.PUBLIC_FIREBASE_STORAGE_BUCKET ?? import.meta.env.VITE_FIREBASE_STORAGE_BUCKET;
 	const firebaseMessagingSenderId =
