@@ -85,9 +85,9 @@ npm run auth:session-cookie -- --id-token '<firebase-id-token>' --expires-days 7
 ```
 
 2. Update runtime secrets/config with:
-	- `AUTH_BOOTSTRAP_SESSION_COOKIE=<new-cookie>`
-	- `AUTH_BOOTSTRAP_COMPANY_ID=<company-id>`
-	- `AUTH_BOOTSTRAP_ENABLED=true`
+   - `AUTH_BOOTSTRAP_SESSION_COOKIE=<new-cookie>`
+   - `AUTH_BOOTSTRAP_COMPANY_ID=<company-id>`
+   - `AUTH_BOOTSTRAP_ENABLED=true`
 3. Clear `AUTH_BOOTSTRAP_ID_TOKEN` after rotation; do not keep ID tokens in persistent config.
 4. Roll/redeploy the service so new instances use the new cookie.
 5. Verify sign-in by loading `/auth` and confirming redirect to `/recruiter`.
@@ -114,6 +114,23 @@ npm run build
 ```
 
 You can preview the production build with `npm run preview`.
+
+## Branch workflow
+
+- `main` is the protected production branch.
+- `dev` is the default working branch for ongoing changes.
+- Local git hooks block direct commits to `main` and direct pushes to `origin/main`.
+- GitHub Actions runs the same validation path on pushes and pull requests for `dev` and `main`.
+
+To prepare a release from `dev` into `main`:
+
+```sh
+npm run release:main
+```
+
+That command verifies you are on a clean `dev` branch, fetches remote state, runs `lint`, `check`, unit tests, and a production build, then prints the GitHub compare URL for opening the pull request into `main`.
+
+The matching remote CI workflow lives at `.github/workflows/ci.yml` and runs the same validation set on GitHub.
 
 ## Cloud Run deploy (persistent custom domain config)
 
