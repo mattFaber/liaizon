@@ -11,7 +11,12 @@
 </script>
 
 {#if message}
-	<div class={`toast toast-${tone}`} role="status" aria-live="polite" style={`--toast-duration: ${durationMs}ms;`}>
+	<div
+		class={`toast toast-${tone}`}
+		role="status"
+		aria-live="polite"
+		style={`--toast-duration: ${durationMs}ms;`}
+	>
 		{message}
 	</div>
 {/if}

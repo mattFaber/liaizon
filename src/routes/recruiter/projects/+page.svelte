@@ -31,7 +31,9 @@
 	}
 
 	function parseSelectedValues(formElement: HTMLFormElement, fieldName: string): string {
-		const selected = Array.from(formElement.querySelectorAll<HTMLInputElement>(`input[name="${fieldName}"]:checked`));
+		const selected = Array.from(
+			formElement.querySelectorAll<HTMLInputElement>(`input[name="${fieldName}"]:checked`)
+		);
 		return selected.map((input) => input.value).join(', ');
 	}
 
@@ -56,8 +58,12 @@
 
 	function handleUpdateSubmit(event: SubmitEvent) {
 		const formElement = event.currentTarget as HTMLFormElement;
-		const applicationIdsInput = formElement.querySelector<HTMLInputElement>('input[name="applicationIds"]');
-		const collaboratorInput = formElement.querySelector<HTMLInputElement>('input[name="collaboratorUserIds"]');
+		const applicationIdsInput = formElement.querySelector<HTMLInputElement>(
+			'input[name="applicationIds"]'
+		);
+		const collaboratorInput = formElement.querySelector<HTMLInputElement>(
+			'input[name="collaboratorUserIds"]'
+		);
 		const projectId = String(new FormData(formElement).get('projectId') ?? '');
 		if (applicationIdsInput) {
 			applicationIdsInput.value = parseSelectedValues(formElement, 'applicationIdSelected');
@@ -121,7 +127,6 @@
 		optimisticProjectUpdatesById = {};
 		optimisticHiddenById = {};
 	});
-
 </script>
 
 <h2>Projects</h2>
@@ -173,94 +178,117 @@
 				{#if !optimisticHiddenById[project.projectId]}
 					{@const displayProject = viewProject(project)}
 					<li>
-					<div class="entry-title">
-						<strong>{displayProject.name}</strong> ({displayProject.projectId})
-						{#if !displayProject.isActive}
-							<span class="status-chip">Archived</span>
-						{/if}
-					</div>
-					<form method="POST" action="?/updateProject" onsubmit={handleUpdateSubmit} class="entry-form">
-						<input type="hidden" name="projectId" value={displayProject.projectId} />
-						<input name="name" value={displayProject.name} required />
-						<textarea name="description" rows="2">{displayProject.description ?? ''}</textarea>
-						<select name="status">
-							{#each statuses as status (status)}
-								<option value={status} selected={displayProject.status === status}>{status}</option>
-							{/each}
-						</select>
-						<select name="ownerUserId">
-							{#each data.users as user (user.userId)}
-								<option value={user.userId} selected={displayProject.ownerUserId === user.userId}>
-									{user.displayName || user.email || user.userId}
-								</option>
-							{/each}
-						</select>
-						<details>
-							<summary>Project relationships</summary>
-							<p>Collaborators</p>
-							{#each data.users as user (user.userId)}
-								<label class="checkbox-row">
-									<input
-										type="checkbox"
-										name="collaboratorUserIdSelected"
-										value={user.userId}
-										checked={displayProject.collaboratorUserIds.includes(user.userId)}
-									/>
-									{user.displayName || user.email || user.userId}
-								</label>
-							{/each}
-							<p>Applications</p>
-							{#each data.applications as application (application.applicationId)}
-								<label class="checkbox-row">
-									<input
-										type="checkbox"
-										name="applicationIdSelected"
-										value={application.applicationId}
-										checked={displayProject.applicationIds.includes(application.applicationId)}
-									/>
-									{application.applicationId}
-								</label>
-							{/each}
-						</details>
-						<input type="hidden" name="collaboratorUserIds" value={listToCsv(displayProject.collaboratorUserIds)} />
-						<input type="hidden" name="applicationIds" value={listToCsv(displayProject.applicationIds)} />
-						<input name="tags" value={listToCsv(displayProject.tags)} placeholder="tag_1, tag_2" />
-						<button type="submit">Update</button>
-					</form>
-					<div class="action-row">
+						<div class="entry-title">
+							<strong>{displayProject.name}</strong> ({displayProject.projectId})
+							{#if !displayProject.isActive}
+								<span class="status-chip">Archived</span>
+							{/if}
+						</div>
 						<form
 							method="POST"
-							action="?/archiveProject"
-							onsubmit={(event) => handleArchive(event, displayProject.projectId)}
+							action="?/updateProject"
+							onsubmit={handleUpdateSubmit}
+							class="entry-form"
 						>
 							<input type="hidden" name="projectId" value={displayProject.projectId} />
-							<button type="submit" disabled={!displayProject.isActive || archiveSubmittingById[displayProject.projectId]}>
-								{#if archiveSubmittingById[displayProject.projectId]}
-									Archiving...
-								{:else if archiveConfirmById[displayProject.projectId]}
-									Confirm Archive
-								{:else}
-									Archive
-								{/if}
-							</button>
+							<input name="name" value={displayProject.name} required />
+							<textarea name="description" rows="2">{displayProject.description ?? ''}</textarea>
+							<select name="status">
+								{#each statuses as status (status)}
+									<option value={status} selected={displayProject.status === status}
+										>{status}</option
+									>
+								{/each}
+							</select>
+							<select name="ownerUserId">
+								{#each data.users as user (user.userId)}
+									<option value={user.userId} selected={displayProject.ownerUserId === user.userId}>
+										{user.displayName || user.email || user.userId}
+									</option>
+								{/each}
+							</select>
+							<details>
+								<summary>Project relationships</summary>
+								<p>Collaborators</p>
+								{#each data.users as user (user.userId)}
+									<label class="checkbox-row">
+										<input
+											type="checkbox"
+											name="collaboratorUserIdSelected"
+											value={user.userId}
+											checked={displayProject.collaboratorUserIds.includes(user.userId)}
+										/>
+										{user.displayName || user.email || user.userId}
+									</label>
+								{/each}
+								<p>Applications</p>
+								{#each data.applications as application (application.applicationId)}
+									<label class="checkbox-row">
+										<input
+											type="checkbox"
+											name="applicationIdSelected"
+											value={application.applicationId}
+											checked={displayProject.applicationIds.includes(application.applicationId)}
+										/>
+										{application.applicationId}
+									</label>
+								{/each}
+							</details>
+							<input
+								type="hidden"
+								name="collaboratorUserIds"
+								value={listToCsv(displayProject.collaboratorUserIds)}
+							/>
+							<input
+								type="hidden"
+								name="applicationIds"
+								value={listToCsv(displayProject.applicationIds)}
+							/>
+							<input
+								name="tags"
+								value={listToCsv(displayProject.tags)}
+								placeholder="tag_1, tag_2"
+							/>
+							<button type="submit">Update</button>
 						</form>
-						<form
-							method="POST"
-							action="?/deleteProject"
-							onsubmit={(event) => handleDelete(event, displayProject.projectId)}
-						>
-							<input type="hidden" name="projectId" value={displayProject.projectId} />
-							<button type="submit" disabled={deleteSubmittingById[displayProject.projectId]}>
-								{#if deleteSubmittingById[displayProject.projectId]}
-									Deleting...
-								{:else if deleteConfirmById[displayProject.projectId]}
-									Confirm Delete
-								{:else}
-									Delete
-								{/if}
-							</button>
-						</form>
-					</div>
+						<div class="action-row">
+							<form
+								method="POST"
+								action="?/archiveProject"
+								onsubmit={(event) => handleArchive(event, displayProject.projectId)}
+							>
+								<input type="hidden" name="projectId" value={displayProject.projectId} />
+								<button
+									type="submit"
+									disabled={!displayProject.isActive ||
+										archiveSubmittingById[displayProject.projectId]}
+								>
+									{#if archiveSubmittingById[displayProject.projectId]}
+										Archiving...
+									{:else if archiveConfirmById[displayProject.projectId]}
+										Confirm Archive
+									{:else}
+										Archive
+									{/if}
+								</button>
+							</form>
+							<form
+								method="POST"
+								action="?/deleteProject"
+								onsubmit={(event) => handleDelete(event, displayProject.projectId)}
+							>
+								<input type="hidden" name="projectId" value={displayProject.projectId} />
+								<button type="submit" disabled={deleteSubmittingById[displayProject.projectId]}>
+									{#if deleteSubmittingById[displayProject.projectId]}
+										Deleting...
+									{:else if deleteConfirmById[displayProject.projectId]}
+										Confirm Delete
+									{:else}
+										Delete
+									{/if}
+								</button>
+							</form>
+						</div>
 					</li>
 				{/if}
 			{/each}
@@ -330,5 +358,4 @@
 		align-items: center;
 		gap: 0.35rem;
 	}
-
 </style>

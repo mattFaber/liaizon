@@ -21,7 +21,8 @@
 		"test:e2e": "playwright test",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-		"deploy:cloudrun": "./scripts/deploy-cloud-run.sh"
+		"deploy:cloudrun": "./scripts/deploy-cloud-run.sh",
+		"release:main": "./scripts/release-main.sh"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^5.1.1",

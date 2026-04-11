@@ -1,17 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { verifyIdToken, createSessionTokenFromIdToken, verifySessionToken, getAuthCookieOptions } = vi.hoisted(() => ({
-	verifyIdToken: vi.fn(),
-	createSessionTokenFromIdToken: vi.fn(),
-	verifySessionToken: vi.fn(),
-	getAuthCookieOptions: vi.fn(() => ({
-		httpOnly: true,
-		path: '/',
-		sameSite: 'lax',
-		secure: false,
-		maxAge: 604800
-	}))
-}));
+const { verifyIdToken, createSessionTokenFromIdToken, verifySessionToken, getAuthCookieOptions } =
+	vi.hoisted(() => ({
+		verifyIdToken: vi.fn(),
+		createSessionTokenFromIdToken: vi.fn(),
+		verifySessionToken: vi.fn(),
+		getAuthCookieOptions: vi.fn(() => ({
+			httpOnly: true,
+			path: '/',
+			sameSite: 'lax',
+			secure: false,
+			maxAge: 604800
+		}))
+	}));
 
 vi.mock('$server/auth', () => ({
 	AUTH_COOKIE_NAME: 'session_token',

@@ -47,17 +47,18 @@ export const load: PageServerLoad = async ({ locals }) => {
 		users.map((user) => [user.userId, user.displayName || user.email || user.userId])
 	);
 
-	const stageTransitionsByApplication: Record<string, ApplicationStageTransition[]> = Object.fromEntries(
-		await Promise.all(
-			applications.map(async (application) => {
-				const transitions = await firestoreRepository.listApplicationStageTransitions(
-					companyId,
-					application.applicationId
-				);
-				return [application.applicationId, transitions] as const;
-			})
-		)
-	);
+	const stageTransitionsByApplication: Record<string, ApplicationStageTransition[]> =
+		Object.fromEntries(
+			await Promise.all(
+				applications.map(async (application) => {
+					const transitions = await firestoreRepository.listApplicationStageTransitions(
+						companyId,
+						application.applicationId
+					);
+					return [application.applicationId, transitions] as const;
+				})
+			)
+		);
 
 	return {
 		companyId,
@@ -479,7 +480,10 @@ export const actions: Actions = {
 		}
 
 		if (application.stage === stageResult.data) {
-			return { success: true, successMessage: `Application is already in stage ${stageResult.data}.` };
+			return {
+				success: true,
+				successMessage: `Application is already in stage ${stageResult.data}.`
+			};
 		}
 
 		const timestamp = now();

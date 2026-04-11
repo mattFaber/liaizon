@@ -409,70 +409,74 @@
 					{#if !optimisticHiddenCandidateById[candidate.candidateId]}
 						{@const displayCandidate = viewCandidate(candidate)}
 						<li>
-						<div class="entry-title">
-							<strong>{displayCandidate.fullName}</strong> ({displayCandidate.candidateId})
-							{#if !displayCandidate.isActive}
-								<span class="status-chip">Archived</span>
-							{/if}
-						</div>
-						<form method="POST" action="?/updateCandidate" class="entry-form">
-							<input type="hidden" name="candidateId" value={displayCandidate.candidateId} />
-							<input name="firstName" value={displayCandidate.firstName} required />
-							<input name="lastName" value={displayCandidate.lastName} required />
-							<input
-								name="currentTitle"
-								value={displayCandidate.currentTitle ?? ''}
-								placeholder="Current title"
-							/>
-							<button type="submit">Update</button>
-						</form>
-						<div class="inline-actions">
-							<form
-								method="POST"
-								action="?/archiveCandidate"
-								class="inline-form"
-								onsubmit={(event) => handleArchiveCandidateSubmit(event, displayCandidate.candidateId)}
-							>
+							<div class="entry-title">
+								<strong>{displayCandidate.fullName}</strong> ({displayCandidate.candidateId})
+								{#if !displayCandidate.isActive}
+									<span class="status-chip">Archived</span>
+								{/if}
+							</div>
+							<form method="POST" action="?/updateCandidate" class="entry-form">
 								<input type="hidden" name="candidateId" value={displayCandidate.candidateId} />
-								<button
-									type="submit"
-									disabled={!displayCandidate.isActive || isArchiveCandidateSubmitting(displayCandidate.candidateId)}
+								<input name="firstName" value={displayCandidate.firstName} required />
+								<input name="lastName" value={displayCandidate.lastName} required />
+								<input
+									name="currentTitle"
+									value={displayCandidate.currentTitle ?? ''}
+									placeholder="Current title"
+								/>
+								<button type="submit">Update</button>
+							</form>
+							<div class="inline-actions">
+								<form
+									method="POST"
+									action="?/archiveCandidate"
+									class="inline-form"
+									onsubmit={(event) =>
+										handleArchiveCandidateSubmit(event, displayCandidate.candidateId)}
 								>
-									{#if isArchiveCandidateSubmitting(displayCandidate.candidateId)}
-										Archiving...
-									{:else if isArchiveCandidateConfirming(displayCandidate.candidateId)}
-										Confirm Archive
-									{:else}
-										Archive
-									{/if}
-								</button>
-							</form>
-							<form
-								method="POST"
-								action="?/deleteCandidate"
-								class="inline-form"
-								onsubmit={(event) => handleDeleteCandidateSubmit(event, displayCandidate.candidateId)}
-							>
-								<input type="hidden" name="candidateId" value={displayCandidate.candidateId} />
-								<button type="submit" disabled={isDeleteCandidateSubmitting(displayCandidate.candidateId)}>
-									{#if isDeleteCandidateSubmitting(displayCandidate.candidateId)}
-										Deleting...
-									{:else if isDeleteCandidateConfirming(displayCandidate.candidateId)}
-										Confirm Delete
-									{:else}
-										Delete
-									{/if}
-								</button>
-							</form>
-						</div>
-						{#if isArchiveCandidateConfirming(displayCandidate.candidateId) &&
-							!isArchiveCandidateSubmitting(displayCandidate.candidateId)}
-							<p class="confirm-hint">Click again to confirm archive.</p>
-						{/if}
-						{#if isDeleteCandidateConfirming(displayCandidate.candidateId) &&
-							!isDeleteCandidateSubmitting(displayCandidate.candidateId)}
-							<p class="confirm-hint">Click again to confirm delete.</p>
-						{/if}
+									<input type="hidden" name="candidateId" value={displayCandidate.candidateId} />
+									<button
+										type="submit"
+										disabled={!displayCandidate.isActive ||
+											isArchiveCandidateSubmitting(displayCandidate.candidateId)}
+									>
+										{#if isArchiveCandidateSubmitting(displayCandidate.candidateId)}
+											Archiving...
+										{:else if isArchiveCandidateConfirming(displayCandidate.candidateId)}
+											Confirm Archive
+										{:else}
+											Archive
+										{/if}
+									</button>
+								</form>
+								<form
+									method="POST"
+									action="?/deleteCandidate"
+									class="inline-form"
+									onsubmit={(event) =>
+										handleDeleteCandidateSubmit(event, displayCandidate.candidateId)}
+								>
+									<input type="hidden" name="candidateId" value={displayCandidate.candidateId} />
+									<button
+										type="submit"
+										disabled={isDeleteCandidateSubmitting(displayCandidate.candidateId)}
+									>
+										{#if isDeleteCandidateSubmitting(displayCandidate.candidateId)}
+											Deleting...
+										{:else if isDeleteCandidateConfirming(displayCandidate.candidateId)}
+											Confirm Delete
+										{:else}
+											Delete
+										{/if}
+									</button>
+								</form>
+							</div>
+							{#if isArchiveCandidateConfirming(displayCandidate.candidateId) && !isArchiveCandidateSubmitting(displayCandidate.candidateId)}
+								<p class="confirm-hint">Click again to confirm archive.</p>
+							{/if}
+							{#if isDeleteCandidateConfirming(displayCandidate.candidateId) && !isDeleteCandidateSubmitting(displayCandidate.candidateId)}
+								<p class="confirm-hint">Click again to confirm delete.</p>
+							{/if}
 						</li>
 					{/if}
 				{/each}
@@ -503,60 +507,67 @@
 					{#if !optimisticHiddenJobById[job.jobId]}
 						{@const displayJob = viewJob(job)}
 						<li>
-						<div class="entry-title">
-							<strong>{displayJob.title}</strong> ({displayJob.jobId})
-							{#if !displayJob.isOpen}
-								<span class="status-chip">Archived</span>
+							<div class="entry-title">
+								<strong>{displayJob.title}</strong> ({displayJob.jobId})
+								{#if !displayJob.isOpen}
+									<span class="status-chip">Archived</span>
+								{/if}
+							</div>
+							<form method="POST" action="?/updateJob" class="entry-form">
+								<input type="hidden" name="jobId" value={displayJob.jobId} />
+								<input name="title" value={displayJob.title} required />
+								<input
+									name="department"
+									value={displayJob.department ?? ''}
+									placeholder="Department"
+								/>
+								<button type="submit">Update</button>
+							</form>
+							<div class="inline-actions">
+								<form
+									method="POST"
+									action="?/archiveJob"
+									class="inline-form"
+									onsubmit={(event) => handleArchiveJobSubmit(event, displayJob.jobId)}
+								>
+									<input type="hidden" name="jobId" value={displayJob.jobId} />
+									<button
+										type="submit"
+										disabled={!displayJob.isOpen || isArchiveJobSubmitting(displayJob.jobId)}
+									>
+										{#if isArchiveJobSubmitting(displayJob.jobId)}
+											Archiving...
+										{:else if isArchiveJobConfirming(displayJob.jobId)}
+											Confirm Archive
+										{:else}
+											Archive
+										{/if}
+									</button>
+								</form>
+								<form
+									method="POST"
+									action="?/deleteJob"
+									class="inline-form"
+									onsubmit={(event) => handleDeleteJobSubmit(event, displayJob.jobId)}
+								>
+									<input type="hidden" name="jobId" value={displayJob.jobId} />
+									<button type="submit" disabled={isDeleteJobSubmitting(displayJob.jobId)}>
+										{#if isDeleteJobSubmitting(displayJob.jobId)}
+											Deleting...
+										{:else if isDeleteJobConfirming(displayJob.jobId)}
+											Confirm Delete
+										{:else}
+											Delete
+										{/if}
+									</button>
+								</form>
+							</div>
+							{#if isArchiveJobConfirming(displayJob.jobId) && !isArchiveJobSubmitting(displayJob.jobId)}
+								<p class="confirm-hint">Click again to confirm archive.</p>
 							{/if}
-						</div>
-						<form method="POST" action="?/updateJob" class="entry-form">
-							<input type="hidden" name="jobId" value={displayJob.jobId} />
-							<input name="title" value={displayJob.title} required />
-							<input name="department" value={displayJob.department ?? ''} placeholder="Department" />
-							<button type="submit">Update</button>
-						</form>
-						<div class="inline-actions">
-							<form
-								method="POST"
-								action="?/archiveJob"
-								class="inline-form"
-								onsubmit={(event) => handleArchiveJobSubmit(event, displayJob.jobId)}
-							>
-								<input type="hidden" name="jobId" value={displayJob.jobId} />
-								<button type="submit" disabled={!displayJob.isOpen || isArchiveJobSubmitting(displayJob.jobId)}>
-									{#if isArchiveJobSubmitting(displayJob.jobId)}
-										Archiving...
-									{:else if isArchiveJobConfirming(displayJob.jobId)}
-										Confirm Archive
-									{:else}
-										Archive
-									{/if}
-								</button>
-							</form>
-							<form
-								method="POST"
-								action="?/deleteJob"
-								class="inline-form"
-								onsubmit={(event) => handleDeleteJobSubmit(event, displayJob.jobId)}
-							>
-								<input type="hidden" name="jobId" value={displayJob.jobId} />
-								<button type="submit" disabled={isDeleteJobSubmitting(displayJob.jobId)}>
-									{#if isDeleteJobSubmitting(displayJob.jobId)}
-										Deleting...
-									{:else if isDeleteJobConfirming(displayJob.jobId)}
-										Confirm Delete
-									{:else}
-										Delete
-									{/if}
-								</button>
-							</form>
-						</div>
-						{#if isArchiveJobConfirming(displayJob.jobId) && !isArchiveJobSubmitting(displayJob.jobId)}
-							<p class="confirm-hint">Click again to confirm archive.</p>
-						{/if}
-						{#if isDeleteJobConfirming(displayJob.jobId) && !isDeleteJobSubmitting(displayJob.jobId)}
-							<p class="confirm-hint">Click again to confirm delete.</p>
-						{/if}
+							{#if isDeleteJobConfirming(displayJob.jobId) && !isDeleteJobSubmitting(displayJob.jobId)}
+								<p class="confirm-hint">Click again to confirm delete.</p>
+							{/if}
 						</li>
 					{/if}
 				{/each}
@@ -607,115 +618,130 @@
 					{#if !optimisticHiddenApplicationById[application.applicationId]}
 						{@const displayApplication = viewApplication(application)}
 						<li>
-						<div class="entry-title">
-							<strong>{displayApplication.applicationId}</strong>: {displayApplication.stage} ({displayApplication.status})
-						</div>
-						<form
-							method="POST"
-							action="?/transitionApplicationStage"
-							class="entry-form"
-							onsubmit={() => setTransitionSubmitting(displayApplication.applicationId, true)}
-						>
-							<input type="hidden" name="applicationId" value={displayApplication.applicationId} />
-							<select name="stage" required>
-								{#each stages as stage (stage)}
-									<option value={stage} selected={stage === displayApplication.stage}>{stage}</option>
-								{/each}
-							</select>
-							<input
-								name="transitionNote"
-								placeholder="Optional transition note"
-								maxlength="500"
-							/>
-							<button
-								type="submit"
-								disabled={displayApplication.status === 'closed' || isTransitionSubmitting(displayApplication.applicationId)}
-							>
-								{isTransitionSubmitting(displayApplication.applicationId) ? 'Moving...' : 'Move Stage'}
-							</button>
-						</form>
-						{#if transitionsFor(displayApplication.applicationId).length > 0}
-							<div class="transition-history">
-								<p class="transition-title">Recent stage transitions</p>
-								<ul>
-									{#each visibleTransitionsFor(displayApplication.applicationId) as transition (transition.transitionId)}
-										<li>
-											<span>{transition.fromStage} -> {transition.toStage}</span>
-											<small>
-												by {actorNameFor(transition.changedBy)} at {formatTransitionTime(transition.createdAt)}
-											</small>
-											{#if transition.note}
-												<em>{transition.note}</em>
-											{/if}
-										</li>
-									{/each}
-								</ul>
-								{#if transitionsFor(displayApplication.applicationId).length > DEFAULT_VISIBLE_TRANSITIONS}
-									<button
-										type="button"
-										class="link-button"
-										onclick={() => toggleExpanded(displayApplication.applicationId)}
-									>
-										{isExpanded(displayApplication.applicationId) ? 'Show less' : 'Show more'}
-									</button>
-								{/if}
+							<div class="entry-title">
+								<strong>{displayApplication.applicationId}</strong>: {displayApplication.stage} ({displayApplication.status})
 							</div>
-						{/if}
-						<div class="inline-actions">
 							<form
 								method="POST"
-								action="?/archiveApplication"
-								class="inline-form"
-								onsubmit={(event) =>
-									handleArchiveApplicationSubmit(event, displayApplication.applicationId)}
+								action="?/transitionApplicationStage"
+								class="entry-form"
+								onsubmit={() => setTransitionSubmitting(displayApplication.applicationId, true)}
 							>
-								<input type="hidden" name="applicationId" value={displayApplication.applicationId} />
+								<input
+									type="hidden"
+									name="applicationId"
+									value={displayApplication.applicationId}
+								/>
+								<select name="stage" required>
+									{#each stages as stage (stage)}
+										<option value={stage} selected={stage === displayApplication.stage}
+											>{stage}</option
+										>
+									{/each}
+								</select>
+								<input
+									name="transitionNote"
+									placeholder="Optional transition note"
+									maxlength="500"
+								/>
 								<button
 									type="submit"
-									disabled={
-										displayApplication.status === 'closed' ||
-										isArchiveApplicationSubmitting(displayApplication.applicationId)
-									}
+									disabled={displayApplication.status === 'closed' ||
+										isTransitionSubmitting(displayApplication.applicationId)}
 								>
-									{#if isArchiveApplicationSubmitting(displayApplication.applicationId)}
-										Archiving...
-									{:else if isArchiveApplicationConfirming(displayApplication.applicationId)}
-										Confirm Archive
-									{:else}
-										Archive
-									{/if}
+									{isTransitionSubmitting(displayApplication.applicationId)
+										? 'Moving...'
+										: 'Move Stage'}
 								</button>
 							</form>
-							<form
-								method="POST"
-								action="?/deleteApplication"
-								class="inline-form"
-								onsubmit={(event) =>
-									handleDeleteApplicationSubmit(event, displayApplication.applicationId)}
-							>
-								<input type="hidden" name="applicationId" value={displayApplication.applicationId} />
-								<button
-									type="submit"
-									disabled={isDeleteApplicationSubmitting(displayApplication.applicationId)}
-								>
-									{#if isDeleteApplicationSubmitting(displayApplication.applicationId)}
-										Deleting...
-									{:else if isDeleteApplicationConfirming(displayApplication.applicationId)}
-										Confirm Delete
-									{:else}
-										Delete
+							{#if transitionsFor(displayApplication.applicationId).length > 0}
+								<div class="transition-history">
+									<p class="transition-title">Recent stage transitions</p>
+									<ul>
+										{#each visibleTransitionsFor(displayApplication.applicationId) as transition (transition.transitionId)}
+											<li>
+												<span>{transition.fromStage} -> {transition.toStage}</span>
+												<small>
+													by {actorNameFor(transition.changedBy)} at {formatTransitionTime(
+														transition.createdAt
+													)}
+												</small>
+												{#if transition.note}
+													<em>{transition.note}</em>
+												{/if}
+											</li>
+										{/each}
+									</ul>
+									{#if transitionsFor(displayApplication.applicationId).length > DEFAULT_VISIBLE_TRANSITIONS}
+										<button
+											type="button"
+											class="link-button"
+											onclick={() => toggleExpanded(displayApplication.applicationId)}
+										>
+											{isExpanded(displayApplication.applicationId) ? 'Show less' : 'Show more'}
+										</button>
 									{/if}
-								</button>
-							</form>
-						</div>
-						{#if isArchiveApplicationConfirming(displayApplication.applicationId) &&
-							!isArchiveApplicationSubmitting(displayApplication.applicationId)}
-							<p class="confirm-hint">Click again to confirm archive.</p>
-						{/if}
-						{#if isDeleteApplicationConfirming(displayApplication.applicationId) &&
-							!isDeleteApplicationSubmitting(displayApplication.applicationId)}
-							<p class="confirm-hint">Click again to confirm delete.</p>
-						{/if}
+								</div>
+							{/if}
+							<div class="inline-actions">
+								<form
+									method="POST"
+									action="?/archiveApplication"
+									class="inline-form"
+									onsubmit={(event) =>
+										handleArchiveApplicationSubmit(event, displayApplication.applicationId)}
+								>
+									<input
+										type="hidden"
+										name="applicationId"
+										value={displayApplication.applicationId}
+									/>
+									<button
+										type="submit"
+										disabled={displayApplication.status === 'closed' ||
+											isArchiveApplicationSubmitting(displayApplication.applicationId)}
+									>
+										{#if isArchiveApplicationSubmitting(displayApplication.applicationId)}
+											Archiving...
+										{:else if isArchiveApplicationConfirming(displayApplication.applicationId)}
+											Confirm Archive
+										{:else}
+											Archive
+										{/if}
+									</button>
+								</form>
+								<form
+									method="POST"
+									action="?/deleteApplication"
+									class="inline-form"
+									onsubmit={(event) =>
+										handleDeleteApplicationSubmit(event, displayApplication.applicationId)}
+								>
+									<input
+										type="hidden"
+										name="applicationId"
+										value={displayApplication.applicationId}
+									/>
+									<button
+										type="submit"
+										disabled={isDeleteApplicationSubmitting(displayApplication.applicationId)}
+									>
+										{#if isDeleteApplicationSubmitting(displayApplication.applicationId)}
+											Deleting...
+										{:else if isDeleteApplicationConfirming(displayApplication.applicationId)}
+											Confirm Delete
+										{:else}
+											Delete
+										{/if}
+									</button>
+								</form>
+							</div>
+							{#if isArchiveApplicationConfirming(displayApplication.applicationId) && !isArchiveApplicationSubmitting(displayApplication.applicationId)}
+								<p class="confirm-hint">Click again to confirm archive.</p>
+							{/if}
+							{#if isDeleteApplicationConfirming(displayApplication.applicationId) && !isDeleteApplicationSubmitting(displayApplication.applicationId)}
+								<p class="confirm-hint">Click again to confirm delete.</p>
+							{/if}
 						</li>
 					{/if}
 				{/each}
@@ -853,5 +879,4 @@
 		font-size: 0.78rem;
 		color: #a16207;
 	}
-
 </style>

@@ -170,7 +170,7 @@ export async function generateRecruiterMessage(
 	});
 
 	let rawText: string;
-	let tokenUsage = { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
+	let tokenUsage: { inputTokens: number; outputTokens: number; totalTokens: number };
 
 	try {
 		const response = await model.generateContent({

@@ -79,7 +79,9 @@ describe('projects load', () => {
 
 	it('loads projects, applications, and users for a scoped user', async () => {
 		vi.mocked(firestoreRepository.listProjects).mockResolvedValue([{ projectId: 'proj_1' }] as any);
-		vi.mocked(firestoreRepository.listApplications).mockResolvedValue([{ applicationId: 'app_1' }] as any);
+		vi.mocked(firestoreRepository.listApplications).mockResolvedValue([
+			{ applicationId: 'app_1' }
+		] as any);
 		vi.mocked(firestoreRepository.listUsers).mockResolvedValue([{ userId: 'user_1' }] as any);
 
 		const result = await load({

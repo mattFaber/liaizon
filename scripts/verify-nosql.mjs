@@ -27,8 +27,8 @@ const blockedCodePatterns = [
 	/\bCREATE\s+TABLE\s+\w+/i,
 	/\bALTER\s+TABLE\s+\w+/i,
 	/\bDROP\s+TABLE\s+\w+/i,
-	/\bfrom\s+['\"](pg|mysql2?|sqlite3?|better-sqlite3|knex|sequelize|typeorm|@prisma\/client)['\"]/i,
-	/\brequire\((['\"])(pg|mysql2?|sqlite3?|better-sqlite3|knex|sequelize|typeorm|@prisma\/client)\1\)/i
+	/\bfrom\s+['"](pg|mysql2?|sqlite3?|better-sqlite3|knex|sequelize|typeorm|@prisma\/client)['"]/i,
+	/\brequire\((['"])(pg|mysql2?|sqlite3?|better-sqlite3|knex|sequelize|typeorm|@prisma\/client)\1\)/i
 ];
 
 function readJson(filePath) {

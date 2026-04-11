@@ -153,7 +153,9 @@ export const actions: Actions = {
 		const expiresDays = Number(formData.get('expiresDays') ?? 7);
 
 		if (!idToken) {
-			return fail(400, { error: 'Firebase ID token is required to mint a bootstrap session cookie.' });
+			return fail(400, {
+				error: 'Firebase ID token is required to mint a bootstrap session cookie.'
+			});
 		}
 
 		if (!companyId) {
@@ -462,7 +464,10 @@ export const actions: Actions = {
 
 		const formData = await event.request.formData();
 		const versionId = String(formData.get('versionId') ?? '').trim();
-		const existing = await firestoreRepository.getSystemInstructionVersion(user.companyId!, versionId);
+		const existing = await firestoreRepository.getSystemInstructionVersion(
+			user.companyId!,
+			versionId
+		);
 		if (!existing) {
 			return fail(404, { error: 'System instruction version not found.' });
 		}

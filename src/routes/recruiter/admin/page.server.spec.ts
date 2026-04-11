@@ -90,8 +90,12 @@ describe('admin load', () => {
 		vi.mocked(firestoreRepository.getCompany).mockResolvedValue({ companyId: 'company_1' } as any);
 		vi.mocked(firestoreRepository.listUsers).mockResolvedValue([{ userId: 'u1' }] as any);
 		vi.mocked(firestoreRepository.listAppSettings).mockResolvedValue([{ settingsId: 's1' }] as any);
-		vi.mocked(firestoreRepository.listWritingSamples).mockResolvedValue([{ sampleId: 'w1' }] as any);
-		vi.mocked(firestoreRepository.listPromptTemplates).mockResolvedValue([{ templateId: 't1' }] as any);
+		vi.mocked(firestoreRepository.listWritingSamples).mockResolvedValue([
+			{ sampleId: 'w1' }
+		] as any);
+		vi.mocked(firestoreRepository.listPromptTemplates).mockResolvedValue([
+			{ templateId: 't1' }
+		] as any);
 		vi.mocked(firestoreRepository.listSystemInstructionVersions).mockResolvedValue([
 			{ versionId: 'v1' }
 		] as any);
