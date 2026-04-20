@@ -2,16 +2,11 @@
 	import { browser } from '$app/environment';
 	import { tick } from 'svelte';
 
-	let { data, form } = $props();
-	let companyIdInput = $state('demo-company');
+	let { form } = $props();
 	let idToken = $state('');
 	let clientError = $state('');
 	let error = $derived(clientError || form?.error || '');
-	let effectiveCompanyId = $derived(
-		data.engineerAuthConfigured ? data.configuredCompanyId || 'demo-company' : companyIdInput
-	);
 	let isGoogleSigningIn = $state(false);
-	let isManualSigningIn = $state(false);
 
 	async function signInWithGoogle() {
 		if (!browser) {
@@ -38,72 +33,26 @@
 	}
 
 	function handleSubmit(event: SubmitEvent) {
-		clientError = '';
-		isManualSigningIn = false;
-
-		if (data.engineerAuthConfigured) {
-			isManualSigningIn = true;
-			return;
-		}
-
-		const target = event.currentTarget as HTMLFormElement | null;
-		const tokenInput = target?.elements.namedItem('idToken') as HTMLInputElement | null;
-
-		if (!tokenInput?.value.trim()) {
+		if (!idToken.trim()) {
 			event.preventDefault();
-			clientError = 'A Firebase ID token is required.';
-			return;
+			clientError = 'Failed to get Firebase ID token.';
 		}
-
-		if (!effectiveCompanyId.trim()) {
-			event.preventDefault();
-			clientError = 'A company ID is required.';
-			return;
-		}
-
-		isManualSigningIn = true;
 	}
 </script>
 
 <main class="auth-page">
 	<h1>Auth Setup</h1>
-	<p>
-		Authentication sets secure cookies for Firebase session and tenant scope. When auth bootstrap is
-		enabled, the Firebase ID token is supplied by server configuration instead of user input.
-	</p>
+	<p>Sign in with your Google account to get started.</p>
 
 	<form id="auth-form" method="POST" onsubmit={handleSubmit}>
-		<label for="company-id">Company ID</label>
-		{#if data.engineerAuthConfigured}
-			<input id="company-id" name="companyId" value={effectiveCompanyId} required readonly />
-		{:else}
-			<input id="company-id" name="companyId" bind:value={companyIdInput} required />
-		{/if}
-
 		<input name="idToken" type="hidden" bind:value={idToken} />
 
-		{#if data.engineerAuthConfigured}
-			<p class="hint">
-				Engineer-managed bootstrap is enabled. End users do not need to provide a Firebase ID token
-				on this screen.
-			</p>
-			<button type="submit" disabled={isManualSigningIn}>
-				{isManualSigningIn ? 'Signing In...' : 'Continue'}
-			</button>
-		{:else}
-			<button type="button" onclick={signInWithGoogle} disabled={isGoogleSigningIn}>
-				{isGoogleSigningIn ? 'Signing In...' : 'Sign In With Google'}
-			</button>
-
-			<p class="hint">Firebase ID tokens are acquired via Google sign-in in this mode.</p>
-		{/if}
+		<button type="button" onclick={signInWithGoogle} disabled={isGoogleSigningIn}>
+			{isGoogleSigningIn ? 'Signing In...' : 'Continue With Google'}
+		</button>
 
 		{#if error}
 			<p class="error" role="alert" aria-live="assertive">{error}</p>
-		{/if}
-
-		{#if data.bootstrapError}
-			<p class="error" role="alert" aria-live="assertive">{data.bootstrapError}</p>
 		{/if}
 	</form>
 </main>
@@ -146,11 +95,5 @@
 
 	.error {
 		color: #b91c1c;
-	}
-
-	.hint {
-		margin: 0;
-		font-size: 0.9rem;
-		color: #52525b;
 	}
 </style>

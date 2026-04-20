@@ -3,123 +3,46 @@ import {
 	COMPANY_COOKIE_NAME,
 	createSessionTokenFromIdToken,
 	getAuthCookieOptions,
-	verifyIdToken,
-	verifySessionToken
+	verifyIdToken
 } from '$server/auth';
+import { provisionUserWorkspace } from '$server/user-workspace';
 import { serverEnv } from '$lib/env/server';
 import { log, logError } from '$lib/logging';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ cookies }) => {
-	if (serverEnv.authBootstrapEnabled) {
-		const envSessionCookie = String(serverEnv.authBootstrapSessionCookie ?? '').trim();
-		const envIdToken = String(serverEnv.authBootstrapIdToken ?? '').trim();
-
-		if (!envSessionCookie && !envIdToken) {
-			return {
-				engineerAuthConfigured: true,
-				configuredCompanyId: serverEnv.authBootstrapCompanyId,
-				bootstrapError:
-					'AUTH_BOOTSTRAP_ENABLED is true but neither AUTH_BOOTSTRAP_SESSION_COOKIE nor AUTH_BOOTSTRAP_ID_TOKEN is configured.'
-			};
-		}
-
-		let sessionToken = envSessionCookie;
-
-		try {
-			if (sessionToken) {
-				await verifySessionToken(sessionToken);
-			} else {
-				await verifyIdToken(envIdToken);
-				sessionToken = await createSessionTokenFromIdToken(envIdToken);
-			}
-		} catch (error) {
-			logError('Failed to verify configured auth bootstrap token during auth bootstrap.', error);
-
-			return {
-				engineerAuthConfigured: true,
-				configuredCompanyId: serverEnv.authBootstrapCompanyId,
-				bootstrapError:
-					'Configured auth bootstrap credentials are invalid. Check AUTH_BOOTSTRAP_SESSION_COOKIE or AUTH_BOOTSTRAP_ID_TOKEN.'
-			};
-		}
-
-		cookies.set(AUTH_COOKIE_NAME, sessionToken, getAuthCookieOptions());
-		cookies.set(COMPANY_COOKIE_NAME, serverEnv.authBootstrapCompanyId, getAuthCookieOptions());
-
-		log({
-			level: 'info',
-			message: 'Auth bootstrap sign-in completed from server environment.',
-			context: {
-				companyId: serverEnv.authBootstrapCompanyId,
-				usedSessionCookie: Boolean(envSessionCookie),
-				usedIdTokenFallback: !envSessionCookie
-			}
-		});
-
+export const load: PageServerLoad = async ({ locals }) => {
+	if (locals.user) {
 		throw redirect(303, '/recruiter');
 	}
 
-	return {
-		engineerAuthConfigured: false,
-		configuredCompanyId: serverEnv.authBootstrapCompanyId,
-		bootstrapError: null
-	};
+	return {};
 };
 
 export const actions: Actions = {
 	default: async ({ request, cookies }) => {
 		const formData = await request.formData();
-		const submittedIdToken = String(formData.get('idToken') ?? '').trim();
-		const submittedCompanyId = String(formData.get('companyId') ?? '').trim();
-		const envSessionCookie = serverEnv.authBootstrapEnabled
-			? String(serverEnv.authBootstrapSessionCookie ?? '').trim()
-			: '';
+		const idToken = String(formData.get('idToken') ?? '').trim();
 
-		const envIdToken = serverEnv.authBootstrapEnabled
-			? String(serverEnv.authBootstrapIdToken ?? '').trim()
-			: '';
-		const envCompanyId = serverEnv.authBootstrapEnabled ? serverEnv.authBootstrapCompanyId : '';
-
-		const idToken = submittedIdToken || envIdToken;
-		const companyId = submittedCompanyId || envCompanyId;
-		let sessionToken = envSessionCookie;
-
-		if (serverEnv.authBootstrapEnabled && !envSessionCookie && !envIdToken) {
-			return fail(500, {
-				error:
-					'AUTH_BOOTSTRAP_ENABLED is true but neither AUTH_BOOTSTRAP_SESSION_COOKIE nor AUTH_BOOTSTRAP_ID_TOKEN is configured.'
-			});
-		}
-
-		if (!sessionToken && !idToken) {
+		if (!idToken) {
 			return fail(400, { error: 'A Firebase ID token is required.' });
 		}
 
-		if (!companyId) {
-			return fail(400, { error: 'A company ID is required.' });
-		}
-
 		try {
-			if (sessionToken) {
-				await verifySessionToken(sessionToken);
-			} else {
-				await verifyIdToken(idToken);
-				sessionToken = await createSessionTokenFromIdToken(idToken);
-			}
+			const sessionUser = await verifyIdToken(idToken);
+			const sessionToken = await createSessionTokenFromIdToken(idToken);
+			const companyId = await provisionUserWorkspace(sessionUser);
 
 			cookies.set(AUTH_COOKIE_NAME, sessionToken, getAuthCookieOptions());
-
 			cookies.set(COMPANY_COOKIE_NAME, companyId, getAuthCookieOptions());
 
 			log({
 				level: 'info',
-				message: 'Auth sign-in completed from auth form action.',
+				message: 'User signed in with Google and workspace provisioned.',
 				context: {
-					companyId,
-					engineerBootstrapEnabled: serverEnv.authBootstrapEnabled,
-					usedSessionCookie: Boolean(envSessionCookie)
+					uid: sessionUser.uid,
+					email: sessionUser.email,
+					companyId
 				}
 			});
 		} catch (error) {
