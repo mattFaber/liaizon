@@ -10,31 +10,6 @@ function emptyStringToUndefined(value: string | undefined): string | undefined {
 	return trimmed.length > 0 ? trimmed : undefined;
 }
 
-function parseBooleanEnv(value: unknown): boolean | undefined {
-	if (typeof value === 'boolean') {
-		return value;
-	}
-
-	if (typeof value !== 'string') {
-		return undefined;
-	}
-
-	switch (value.trim().toLowerCase()) {
-		case 'true':
-		case '1':
-		case 'yes':
-		case 'on':
-			return true;
-		case 'false':
-		case '0':
-		case 'no':
-		case 'off':
-			return false;
-		default:
-			return undefined;
-	}
-}
-
 const serverEnvSchema = z.object({
 	nodeEnv: z.enum(['development', 'test', 'production']).default('development'),
 	gcpProjectId: z.string().min(1).default('local-project'),
@@ -51,10 +26,6 @@ const serverEnvSchema = z.object({
 	cloudTasksLocation: z.string().min(1).optional(),
 	cloudTasksQueueBulkGeneration: z.string().min(1).optional(),
 	bulkGenerationMaxConcurrency: z.coerce.number().int().positive().default(5),
-	authBootstrapEnabled: z.preprocess(parseBooleanEnv, z.boolean()).optional().default(false),
-	authBootstrapIdToken: z.string().min(1).optional(),
-	authBootstrapSessionCookie: z.string().min(1).optional(),
-	authBootstrapCompanyId: z.string().min(1).default('demo-company'),
 	logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('info')
 });
 
@@ -80,10 +51,6 @@ export function getServerEnv(): ServerEnv {
 		cloudTasksLocation: emptyStringToUndefined(env.CLOUD_TASKS_LOCATION),
 		cloudTasksQueueBulkGeneration: emptyStringToUndefined(env.CLOUD_TASKS_QUEUE_BULK_GENERATION),
 		bulkGenerationMaxConcurrency: env.BULK_GENERATION_MAX_CONCURRENCY,
-		authBootstrapEnabled: env.AUTH_BOOTSTRAP_ENABLED,
-		authBootstrapIdToken: emptyStringToUndefined(env.AUTH_BOOTSTRAP_ID_TOKEN),
-		authBootstrapSessionCookie: emptyStringToUndefined(env.AUTH_BOOTSTRAP_SESSION_COOKIE),
-		authBootstrapCompanyId: env.AUTH_BOOTSTRAP_COMPANY_ID,
 		logLevel: env.LOG_LEVEL
 	});
 }
